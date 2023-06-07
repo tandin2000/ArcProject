@@ -1,6 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import config from '../config';
 
-export default () => (
+export default () => {
+  const [data, setData] = useState({});
+  const [predata, setPreData] = useState();
+
+  const formatList = (content) => {
+    const optionsArray = content.split("\n");
+    return optionsArray;
+    };
+
+  useEffect(()=>{
+    fetch(`${config.API}/home-page?populate=home_intro`)
+    .then(response => response.json())
+    .then(data => {
+       const dataPayload = data.data.attributes.home_intro.data;
+       setPreData(dataPayload)
+    })
+    .catch(error => {
+        console.log(error);
+    });
+  },[])
+
+  useEffect(()=>{
+    setData([]);
+    if(predata?.id !== undefined){
+      fetch(`${config.API}/home-intros/${predata?.id}?populate=*`)
+      .then(response => response.json())
+      .then(data => {
+        const dataPayload = data.data.attributes;
+        const listArray = formatList(dataPayload.List);
+        const payload = {
+          title: dataPayload.Title,
+          description: dataPayload.Description,
+          image: dataPayload.Image.data.attributes.url,
+          list:listArray
+        }
+        setData(payload)
+      })
+      .catch(error => {
+          console.log(error);
+      });
+    }
+  },[predata])
+
+  return(
   <section className='container-fluid'>
           <div className='row m-2-hor'>
             
@@ -8,7 +52,7 @@ export default () => (
               <div className='col-home'>
                 <div className='thumb'>
                   <img
-                      src="./img/home.jpg"
+                      src={`${config.API_ASSETS}${data?.image}`}
                       className="img-fluid"
                       alt="#"
                     />
@@ -19,24 +63,12 @@ export default () => (
             <div className='col-md-6'>
               <div className='dflex-center'>
                 <div className='col-home mt-md-0 mt-5'>
-                  <div className='heading'>We Are Interior Design</div>
-                  <div className='content'>
-                    We believe that interior design is more than great functionality 
-                    and beautiful aesthetics. We aim to make your home interiors 
-                    a reflection of your personality. Your home should be something 
-                    that you and your family take pride in and love to spend time in.
-                  </div>
-                  <div className='content'>
-                    We believe that interior design is more than great functionality 
-                    and beautiful aesthetics. We aim to make your home interiors 
-                    a reflection of your personality. Your home should be something 
-                    that you and your family take pride in and love to spend time in.
-                  </div>
+                  <div className='heading'>{data?.title}</div>
+                  <div className='content'>{data?.description}</div>
                   <ul className='list-home'>
-                    <li>Home Designs Interior</li>
-                    <li>Modular Kitchen Designs</li>
-                    <li>Wardrobe Design Interior</li>
-                    <li>Space Saving Furniture</li>
+                    {data?.list !== undefined && data?.list.map(x=>{
+                      return <li>{x}</li>
+                    })}
                   </ul>
                 </div>
               </div>
@@ -44,4 +76,4 @@ export default () => (
             
           </div>
         </section>
-);
+)};

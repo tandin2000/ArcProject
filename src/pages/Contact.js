@@ -34,7 +34,7 @@ const Contact = ({ history }) => {
   const [contactNo, setContactNo] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [pageInfo, setPageInfo] = useState();
+  const [pageInfo, setPageInfo] = useState("");
   const [dropDownOption, setDropDownOption] = useState([]);
   const [uploadedImage, setUploadedImage] = useState(null);
   

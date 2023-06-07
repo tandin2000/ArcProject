@@ -12,6 +12,7 @@ import Process from "./pages/Process";
 import Work from "./pages/works";
 import Contact from "./pages/Contact";
 import Case from "./pages/detailCase";
+import config from "./config";
 
 
 
@@ -19,6 +20,30 @@ import Case from "./pages/detailCase";
 function App() {
   const [loading, setLoading] = useState(true);
   const [navBackground, setNavBack] = useState(false);
+  useEffect(()=>{
+    fetch(`${config.API}/information?populate=*`)
+    .then(response => response.json())
+    .then(data => {
+       const dataPayload = data.data.attributes;
+       const payload = {
+        "aboutUs":dataPayload.About_Us,
+        "companyName":dataPayload.Company_Name,
+        "CopyrightsYear":dataPayload.Copyrights_Year,
+        "emailLink":dataPayload.Email_Link,
+        "fbLink":dataPayload.Facebook_Link,
+        "igLink":dataPayload.Instagram_Link,
+        "ldLink":dataPayload.LinkedIn_link,
+        "location":dataPayload.Location,
+        "PhoneNumber":dataPayload.Phone_Number,
+        "twLink":dataPayload.Twitter_Link,
+        "logoImg":dataPayload.Logo.data.attributes.url
+       } 
+       localStorage.setItem('info', JSON.stringify(payload));
+    })
+    .catch(error => {
+        console.log(error);
+    });
+   },[])
 
   useEffect(() => {
     setTimeout(() => {

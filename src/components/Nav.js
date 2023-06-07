@@ -10,11 +10,20 @@ import {
 } from "../styles/Navigation.styles";
 import { withRouter } from "react-router";
 import NavButton from "./NavButton";
+import config from "../config";
 
 const NavigationMenu = ({ history, hasBackground, setBackground }) => {
   const [isOn, setState] = useState(false);
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [linking, setLink] = useState("");
+  const [data, setData] = useState({});
+
+  useEffect(()=>{
+    const storedData = localStorage.getItem('info');
+    const parsedData = JSON.parse(storedData);
+    setData(parsedData)
+  },[]);
+
 
   useEffect(() => {
     !!linking &&
@@ -90,12 +99,12 @@ const NavigationMenu = ({ history, hasBackground, setBackground }) => {
       <div id='header'></div>
       <div className='logo'>
         <img
-          src="./img/logowhite.png"
+          src={`${config.API_ASSETS}${data?.logoImg}`}
           className="img-fluid"
           alt="#"
         />
         <span className='callus'>
-          Call Us: (+9401) 000 888 999
+          Call Us: <a href={`tel:${data?.PhoneNumber}`} style={{fontSize: '0.9rem', fontWeight: 600, color: 'white', textDecoration: 'none'}}>{data?.PhoneNumber}</a>
         </span>
       </div>
       <Wrapper open={isOn} shouldAnimate={shouldAnimate}>
@@ -123,18 +132,18 @@ const NavigationMenu = ({ history, hasBackground, setBackground }) => {
           </div>
 
           <div className='info'>
-            <span>(+9401) 000 888 999</span>
-            <span className='link'>support@react.com</span>
-            <span>129 Park street, Colombo 10903</span>
+            <span> <a href={`tel:${data?.PhoneNumber}`}  style={{ opacity: "0.9", color: '#111', textDecoration: 'none'}}>{data?.PhoneNumber}</a></span>
+            <span> <a href={`mailto:${data?.emailLink}`} className="link" style={{ opacity: "0.9", color: '#111', textDecoration: 'none'}}>{data?.emailLink}</a></span>
+            <span>{data?.location}</span>
           </div>
 
         </Body>
         <SocialContainer className='soc-icon' open={isOn}>
             <span>Follow us:</span>
-            <span className='socicon'><i className="fa fa-facebook-f"></i></span>
-            <span className='socicon'><i className="fa fa-linkedin"></i></span>
-            <span className='socicon'><i className="fa fa-twitter"></i></span>
-            <span className='socicon'><i className="fa  fa-instagram"></i></span>
+            <span className='socicon'> <a href={data?.fbLink} target="_blank"><i className="fa fa-facebook-f"></i></a></span>
+            <span className='socicon'> <a href={data?.ldLink} target="_blank"><i className="fa fa-linkedin"></i></a></span>
+            <span className='socicon'> <a href={data?.twLink} target="_blank"><i className="fa fa-twitter"></i></a></span>
+            <span className='socicon'> <a href={data?.igLink} target="_blank"><i className="fa  fa-instagram"></i></a></span>
         </SocialContainer>
       </Wrapper>
     </header>
