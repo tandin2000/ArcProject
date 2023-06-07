@@ -1,79 +1,82 @@
 import React from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import config from '../config';
 
-export default () => (
+export default () => {
+	const [data, setData] = useState([]);
+	const [predata, setPreData] = useState([]);
+
+  useEffect(() => {
+    setData([])
+      fetch(`${config.API}/process?populate=*`)
+      .then(response => response.json())
+      .then(data => {
+        const dataPayload = data.data.attributes.process_procedures.data;
+        setPreData(dataPayload)
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }, []);
+
+  useEffect(() => {
+    setData([]);
+    predata.map(x => {
+      fetch(`${config.API}/process-procedures/${x.id}?populate=*`)
+        .then(response => response.json())
+        .then(data => {
+          const dataPayload = data.data.attributes;
+          const payload = {
+            title: dataPayload.Title,
+            description: dataPayload.Description,
+            image: dataPayload.Image.data.attributes.url
+          };
+          setData(prev => [...prev, payload]);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    });
+  }, [predata]);
+
+  // console.log(data)
+  return(
   <section className='container-fluid'>
-          <div className='row m-2-hor'>
-            
-            <div className='col-md-6 pt-5'>
-              <div className='col-home'>
-                <div className=''>
-                  <img
-                      src="./img/li1.png"
-                      className="img-fluid"
-                      alt="#"
-                    />
-                </div>
-              </div>
-            </div>
+         {
+         data.map(x=>{
 
-            <div className='col-md-6'>
-              <div className='dflex-center'>
-                <div className='col-home mt-md-0 mt-5'>
-                  <div className='heading'>We Are Interior Design</div>
-                  <div className='content'>
-                    We believe that interior design is more than great functionality 
-                    and beautiful aesthetics. We aim to make your home interiors 
-                    a reflection of your personality. Your home should be something 
-                    that you and your family take pride in and love to spend time in.
+           return(<>
+           <div className='row m-2-hor'>
+              
+              <div className='col-md-6 pt-5'>
+                <div className='col-home'>
+                  <div className=''>
+                    <img
+                        src={`${config.API_ASSETS}${x.image}`}
+                        className="img-fluid"
+                        alt="#"
+                      />
                   </div>
-                  <div className='content'>
-                    We believe that interior design is more than great functionality 
-                    and beautiful aesthetics. We aim to make your home interiors 
-                    a reflection of your personality. Your home should be something 
-                    that you and your family take pride in and love to spend time in.
-                  </div>
-                 
                 </div>
               </div>
-            </div>
-            
-          </div>
-          <br/>
-          <div className='row m-2-hor'>
-            
-            <div className='col-md-6 pt-5'>
-              <div className='col-home'>
-                <div className=''>
-                  <img
-                      src="./img/li2.jpg"
-                      className="img-fluid"
-                      alt="#"
-                    />
+  
+              <div className='col-md-6'>
+                <div className='dflex-center'>
+                  <div className='col-home mt-md-0 mt-5'>
+                    <div className='heading'>{x?.title}</div>
+                    <div className='content'>
+                      {x?.description}
+                    </div>
+                   
+                  </div>
                 </div>
               </div>
+              
             </div>
-
-            <div className='col-md-6'>
-              <div className='dflex-center'>
-                <div className='col-home mt-md-0 mt-5'>
-                  <div className='heading'>We Are Interior Design</div>
-                  <div className='content'>
-                    We believe that interior design is more than great functionality 
-                    and beautiful aesthetics. We aim to make your home interiors 
-                    a reflection of your personality. Your home should be something 
-                    that you and your family take pride in and love to spend time in.
-                  </div>
-                  <div className='content'>
-                    We believe that interior design is more than great functionality 
-                    and beautiful aesthetics. We aim to make your home interiors 
-                    a reflection of your personality. Your home should be something 
-                    that you and your family take pride in and love to spend time in.
-                  </div>
-                 
-                </div>
-              </div>
-            </div>
-            
-          </div>
+            <br/>
+           </>
+            )}
+         )}
         </section>
-);
+)};

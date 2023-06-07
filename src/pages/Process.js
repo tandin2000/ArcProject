@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import Reveal from 'react-reveal/Reveal';
 
@@ -6,9 +6,27 @@ import Processlist from '../components/Processlist';
 import Footer from '../components/Footer';
 
 import { Efect, Efect1, Efect2  } from "../styles/effect.styles";
+import config from "../config";
   
 
 const Process = ({ history }) => {
+	const [predata, setPreData] = useState([]);
+  
+	useEffect(() => {
+	  fetch(`${config.API}/process?populate=*`)
+		.then(response => response.json())
+		.then(data => {
+		  const dataPayload = data.data.attributes;
+		  const payload = {
+			image: dataPayload.Image.data.attributes.url,
+			description : dataPayload.Description
+		  }
+		  setPreData(payload);
+		})
+		.catch(error => {
+		  console.log(error);
+		});
+	}, []);
 
   return (
     <div>
@@ -21,7 +39,7 @@ const Process = ({ history }) => {
       <Reveal effect="fadeIn">
         <section className='jumbotron imgtop'>
         	<img
-	          src="./img/imgabout.jpg"
+	          src={`${config.API_ASSETS}${predata?.image}`}
 	          className="img-fluid"
 	          alt="#"
 	        />
@@ -35,14 +53,8 @@ const Process = ({ history }) => {
 	        		<h1>Process</h1>
 	        	</div>
 	        	<div className='col-md-8'>
-	        		<div className='content'>Donec posuere bibendum metus. 
-	        		Quisque gravida luctus volutpat mauris interdum lectus 
-	        		in dapibus molestie quam felis sollicitudin amet tempus velit 
-	        		lectus nec lorem. Nullam vel mollis neque. 
-	        		Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-	        		Nullam vel enim dui. Cum sociis natoque penatibus et magnis 
-	        		dis parturient montes ridiculus mus. Vestibulum cursus convallis 
-	        		venenatis. Sed ut blandit mauris. 
+	        		<div className='content'>
+						{predata?.description}
 	        		</div>
 	        	</div>
 	        </div>
