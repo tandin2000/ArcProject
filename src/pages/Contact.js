@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import emailjs from 'emailjs-com';
 import Reveal from 'react-reveal/Reveal';
@@ -8,6 +8,7 @@ import Footer from '../components/Footer';
 import { Efect, Efect1, Efect2  } from "../styles/effect.styles";
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, message, Upload } from 'antd';
+import config from "../config";
 // const props = {
 //   name: 'file',
 //   action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
@@ -33,8 +34,40 @@ const Contact = ({ history }) => {
   const [contactNo, setContactNo] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [pageInfo, setPageInfo] = useState();
+  const [dropDownOption, setDropDownOption] = useState([]);
   const [uploadedImage, setUploadedImage] = useState(null);
+  
+  const formatContent = (content) => {
+   // Replace line breaks with <br> tags
+   const formattedContent = content.replace(/\n/g, '<br />');
  
+   // Wrap bold text within <strong> tags
+   const finalContent = formattedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+ 
+   return finalContent;
+   };
+
+   const formatDropDown = (content) => {
+      const optionsArray = content.split(", ");
+      return optionsArray;
+      };
+
+
+  
+  useEffect(()=>{
+   fetch(`${config.API}/contact`)
+   .then(response => response.json())
+   .then(data => {
+      const dataPayload = data.data.attributes;
+
+      setPageInfo(formatContent(dataPayload.Description));
+      setDropDownOption(formatDropDown(dataPayload.DropDownOptions));
+   })
+   .catch(error => {
+       console.log(error);
+   });
+  },[])
 
   const handleFormSubmit = (event) => {
    event.preventDefault();
@@ -48,7 +81,6 @@ const Contact = ({ history }) => {
                     Name: ${userName} \n
                     Contact No: ${contactNo} \n
                   `
-   console.log(uploadedImage, "yo")
     if (uploadedImage) {
       const templateParams = {
          to_name: userName,
@@ -126,56 +158,10 @@ const Contact = ({ history }) => {
           <div className='row'>
            
             <div className='col-md-6'>
-            <div class="sqs-block-content">
-   <p class="sqsrte-large" ><strong>Pricing Guide</strong></p>
-   <ul data-rte-list="default">
-      <li>
-         <p class="" >Static 3D renders range from $4,000 - $4,500 per image.</p>
-      </li>
-      <li>
-         <p class="" >Animation 3D films start from $25,000 for a 30-second clip.</p>
-      </li>
-   </ul>
-   <p class="" >When creating proposals, we tend to price the whole project, rather than individual images. This allows us to optimise the camera angle selection that will work best for specific project requirements &amp; budgets. For instance, a 6-render interior package from a single unit type will cost significantly less than the same amount of images from two different unit types.</p>
-   <p class="" data-rte-preserve-empty="true" ></p>
-   <p class="sqsrte-large" ><strong>Information we need to prepare a proposal?</strong></p>
-   <ol data-rte-list="default">
-      <li>
-         <p class="" ><strong>Architectural Plans</strong>&nbsp;- this will give us a general understanding of the project, its location and unit type selection.<br/></p>
-      </li>
-      <li>
-         <p class="" ><strong>Project Brief</strong></p>
-         <ul data-rte-list="default">
-            <li>
-               <p class="" ><em>At what stage of the development process are you?</em></p>
-            </li>
-            <li>
-               <p class="" ><em>When are you planning on launching your sales &amp; marketing campaign?&nbsp;</em></p>
-            </li>
-            <li>
-               <p class="" ><em>What areas &amp; floor plans are you looking to showcase with 3D Renders?<br/></em></p>
-            </li>
-         </ul>
-      </li>
-      <li>
-         <p class="" ><strong>Information availability</strong>&nbsp;- what information will we have to work with?</p>
-         <ul data-rte-list="default">
-            <li>
-               <p class="" ><em>3D Model</em></p>
-            </li>
-            <li>
-               <p class="" ><em>Exterior finishes</em></p>
-            </li>
-            <li>
-               <p class="" ><em>Interior finishes</em></p>
-            </li>
-            <li>
-               <p class="" ><em>Landscaping plans</em></p>
-            </li>
-         </ul>
-      </li>
-   </ol>
-</div>
+            
+            <div class="sqs-block-content"  dangerouslySetInnerHTML={{ __html: `<div>${pageInfo}</div>` }} >
+
+            </div>
             </div>
 
             <div className='col-md-6'>
@@ -189,8 +175,10 @@ const Contact = ({ history }) => {
         value={selectOption}
         onChange={(event) => setSelectOption(event.target.value)}
       >
-        <option value="1">Option one</option>
-        <option value="2">Option two</option>
+         {dropDownOption.map(x=>{
+            return <option value={x}>{x}</option>
+         })}
+        
       </select>
       <br />
       <label>Project Brief</label>
