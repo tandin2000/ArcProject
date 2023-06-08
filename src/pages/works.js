@@ -10,11 +10,48 @@ import {
 import Footer from '../components/Footer';
 
 import { Efect, Efect1, Efect2  } from "../styles/effect.styles";
+import config from "../config";
   
 
 const Works = ({ history }) => {
 const [toCase, setCase] = useState("");
 const [coord, setCoords] = useState();
+const [data, setData] = useState([]);
+const [predata, setPreData] = useState([]);
+
+useEffect(() => {
+  setData([])
+    fetch(`${config.API}/project?populate=*`)
+    .then(response => response.json())
+    .then(data => {
+      const dataPayload = data.data.attributes.project_cards.data;
+      setPreData(dataPayload)
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }, []);
+
+useEffect(() => {
+    setData([]);
+    predata.map(x => {
+      fetch(`${config.API}/project-cards/${x.id}?populate=*`)
+        .then(response => response.json())
+        .then(data => {
+          const dataPayload = data.data.attributes;
+          const payload = {
+            title: dataPayload.Title,
+            type: dataPayload.Type,
+            image: dataPayload.Image.data.attributes.url,
+            childId: dataPayload.project_cart_child.data.id
+          };
+          setData(prev => [...prev, payload]);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    });
+  }, [predata]);
 
 useEffect(() => {
     toCase &&
@@ -48,188 +85,46 @@ useEffect(() => {
        <Reveal effect="fadeInUp">
        <section className='container-fluid'>
           <div className='row m-2-hor'>
-
-            <div className='col-md-4 slick slickproject p-3'>
-              <div className='slick-slide d-block'>
-                <div>
-                  <div className='itm'>
-                  <LinkWrap active={toCase === "/detailcase"}>
-                    <Overlay active={!!toCase} onMouseDown={e => setCoords(e.nativeEvent.x)}
-                      onMouseUp={e => handleCaseSwap(e.nativeEvent, "/detailcase")}>
-                      <div className='bg'>
-                        <img
-                          src="./img/projects/img-1.jpg"
-                          className="img-fluid"
-                          alt="Imageworks"
-                        />
+            {data.map(x=>{
+                return(<>
+                <div className='col-md-4 slick slickproject p-3'>
+                    <div className='slick-slide d-block'>
+                      <div>
+                        <div className='itm'>
+                        <LinkWrap active={toCase === "/detailcase"}>
+                          <Overlay active={!!toCase} onMouseDown={e => setCoords(e.nativeEvent.x)}
+                            onMouseUp={e => {
+                                localStorage.setItem('ProjectId', x.childId);
+                                handleCaseSwap(e.nativeEvent, "/detailcase")
+                              }}>
+                            <div className='bg'>
+                              <img
+                                src={`${config.API_ASSETS}${x.image}`}
+                                className="img-fluid"
+                                alt="Imageworks"
+                              />
+                            </div>
+                            <div className='desc'>
+                              <div className='tag'>{x.type}</div>
+                              <div className='name'>{x.title}</div>
+                            </div>
+                            <div className='icon'>
+                              <span>
+                                View Project
+                              </span>
+                            </div>
+                          </Overlay>
+                        </LinkWrap>
+                        </div>
                       </div>
-                      <div className='desc'>
-                        <div className='tag'>Interior</div>
-                        <div className='name'>Entertainment Unit</div>
-                      </div>
-                      <div className='icon'>
-                         <span>
-                          View Project
-                        </span>
-                      </div>
-                    </Overlay>
-                  </LinkWrap>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
+                </>)
+              })
+            }
+            
 
-            <div className='col-md-4 slick slickproject p-3'>
-              <div className='slick-slide d-block'>
-                <div>
-                  <div className='itm'>
-                  <LinkWrap active={toCase === "/detailcase"}>
-                    <Overlay active={!!toCase} onMouseDown={e => setCoords(e.nativeEvent.x)}
-                      onMouseUp={e => handleCaseSwap(e.nativeEvent, "/detailcase")}>
-                      <div className='bg'>
-                        <img
-                          src="./img/projects/img-2.jpg"
-                          className="img-fluid"
-                          alt="Imageworks"
-                        />
-                      </div>
-                      <div className='desc'>
-                        <div className='tag'>Furniture</div>
-                        <div className='name'>Mounted Unit</div>
-                      </div>
-                      <div className='icon'>
-                         <span>
-                          View Project
-                        </span>
-                      </div>
-                    </Overlay>
-                  </LinkWrap>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className='col-md-4 slick slickproject p-3'>
-              <div className='slick-slide d-block'>
-                <div>
-                  <div className='itm'>
-                  <LinkWrap active={toCase === "/detailcase"}>
-                    <Overlay active={!!toCase} onMouseDown={e => setCoords(e.nativeEvent.x)}
-                      onMouseUp={e => handleCaseSwap(e.nativeEvent, "/detailcase")}>
-                      <div className='bg'>
-                        <img
-                          src="./img/projects/img-3.jpg"
-                          className="img-fluid"
-                          alt="Imageworks"
-                        />
-                      </div>
-                      <div className='desc'>
-                        <div className='tag'>Interior</div>
-                        <div className='name'>Contemporary Wall</div>
-                      </div>
-                      <div className='icon'>
-                         <span>
-                          View Project
-                        </span>
-                      </div>
-                    </Overlay>
-                  </LinkWrap>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className='col-md-4 slick slickproject p-3'>
-              <div className='slick-slide d-block'>
-                <div>
-                  <div className='itm'>
-                  <LinkWrap active={toCase === "/detailcase"}>
-                    <Overlay active={!!toCase} onMouseDown={e => setCoords(e.nativeEvent.x)}
-                      onMouseUp={e => handleCaseSwap(e.nativeEvent, "/detailcase")}>
-                      <div className='bg'>
-                        <img
-                          src="./img/projects/img-4.jpg"
-                          className="img-fluid"
-                          alt="Imageworks"
-                        />
-                      </div>
-                      <div className='desc'>
-                        <div className='tag'>Interior</div>
-                        <div className='name'>Crockery Wall</div>
-                      </div>
-                      <div className='icon'>
-                         <span>
-                          View Project
-                        </span>
-                      </div>
-                    </Overlay>
-                  </LinkWrap>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className='col-md-4 slick slickproject p-3'>
-              <div className='slick-slide d-block'>
-                <div>
-                  <div className='itm'>
-                  <LinkWrap active={toCase === "/detailcase"}>
-                    <Overlay active={!!toCase} onMouseDown={e => setCoords(e.nativeEvent.x)}
-                      onMouseUp={e => handleCaseSwap(e.nativeEvent, "/detailcase")}>
-                      <div className='bg'>
-                        <img
-                          src="./img/projects/img-5.jpg"
-                          className="img-fluid"
-                          alt="Imageworks"
-                        />
-                      </div>
-                      <div className='desc'>
-                        <div className='tag'>Interior</div>
-                        <div className='name'>Entertainment Unit</div>
-                      </div>
-                      <div className='icon'>
-                         <span>
-                          View Project
-                        </span>
-                      </div>
-                    </Overlay>
-                  </LinkWrap>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className='col-md-4 slick slickproject p-3'>
-              <div className='slick-slide d-block'>
-                <div>
-                  <div className='itm'>
-                  <LinkWrap active={toCase === "/detailcase"}>
-                    <Overlay active={!!toCase} onMouseDown={e => setCoords(e.nativeEvent.x)}
-                      onMouseUp={e => handleCaseSwap(e.nativeEvent, "/detailcase")}>
-                      <div className='bg'>
-                        <img
-                          src="./img/projects/img-2.jpg"
-                          className="img-fluid"
-                          alt="Imageworks"
-                        />
-                      </div>
-                      <div className='desc'>
-                        <div className='tag'>Furniture</div>
-                        <div className='name'>Mounted Unit</div>
-                      </div>
-                      <div className='icon'>
-                         <span>
-                          View Project
-                        </span>
-                      </div>
-                    </Overlay>
-                  </LinkWrap>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className='col-12'>
+            {/* <div className='col-12'>
               <ul className="pagination justify-content-center">
                 <li className="page-item">
                   <div className="page-link">
@@ -251,7 +146,7 @@ useEffect(() => {
                   </div>
                 </li>
               </ul>
-            </div>
+            </div> */}
 
           </div>
        </section>
