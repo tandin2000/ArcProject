@@ -14,6 +14,7 @@ import config from "../config";
   
 
 const Works = ({ history }) => {
+  document.title = "Projects";
 const [toCase, setCase] = useState("");
 const [coord, setCoords] = useState();
 const [data, setData] = useState([]);

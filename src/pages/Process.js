@@ -10,6 +10,7 @@ import config from "../config";
   
 
 const Process = ({ history }) => {
+	document.title = "Process";
 	const [predata, setPreData] = useState([]);
   
 	useEffect(() => {

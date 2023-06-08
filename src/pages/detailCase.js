@@ -96,9 +96,9 @@ class Case extends Component {
 
       const imageList = dataPayload.Images_Proof.data
       function generateDimensions() {
-        const lowest = 1;
-        const highest = 3;
-        const maxDifference = 2;
+        const lowest = 2;
+        const highest = 4;
+        const maxDifference = 1;
       
         // Generate a random width within the constraints
         const width = getRandomInt(lowest, highest);

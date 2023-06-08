@@ -86,14 +86,19 @@ export default () => {
                 <i className="fa  fa-instagram"></i>
               </a>
               </div>
+             
             </div>
           </div>
         </div>
       </div>
+      
       <div className='subfooter'>
         <div className='row m-2-hor'>
           <div className='col-md-6'>
-            <div className='content'>© Copyrights 2022 - {data?.CopyrightsYear}.All rights reserved.</div>
+            <div className='content'>© Copyrights 2022 - {data?.CopyrightsYear} All rights reserved.</div>
+            <div>
+                  <span style={{"font-size": "11px"}}>Developed by</span> <span style={{color: "orange","font-size": "11px"}}>Orand</span>
+            </div>
           </div>
         </div>
       </div>

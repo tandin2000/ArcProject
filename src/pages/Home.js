@@ -10,7 +10,7 @@ import Footer from '../components/Footer';
 import { Efect, Efect1, Efect2  } from "../styles/effect.styles";
 
 const Home = ({ history }) => {
-
+  document.title = "Home";
   return (
     <div>
 

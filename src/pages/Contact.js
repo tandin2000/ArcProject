@@ -27,6 +27,8 @@ import config from "../config";
 //   },
 // };
 const Contact = ({ history }) => {
+  document.title = "Contact";
+  
  const [selectOption, setSelectOption] = useState('');
   const [projectBrief, setProjectBrief] = useState('');
   const [siteAddress, setSiteAddress] = useState('');
