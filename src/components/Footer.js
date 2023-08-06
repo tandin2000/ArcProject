@@ -36,7 +36,7 @@ export default () => {
               <div className='link' onClick={()=>{history.push('/');window.scrollTo(0, 0);}}>Home</div>
               <div className='link' onClick={()=>{history.push('/Process');window.scrollTo(0, 0);}}>Process</div>
               <div className='link' onClick={()=>{history.push('/Work');window.scrollTo(0, 0);}}>Pojects</div>
-              <div className='link' onClick={()=>{history.push('/Contact');window.scrollTo(0, 0);}}>Contace</div>
+              <div className='link' onClick={()=>{history.push('/Contact');window.scrollTo(0, 0);}}>Contact</div>
             </div>
           </div>
         </div>
